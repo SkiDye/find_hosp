@@ -1,0 +1,783 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #475569;
+  --bg-color: #f8fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 0;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.navbar-menu a {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navbar-menu a:hover,
+.navbar-menu a.active {
+  color: var(--primary-color);
+}
+
+/* Page Header */
+.page-header {
+  margin: 32px 0;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Card */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+}
+
+.card-header {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 1024px) {
+  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .grid-cols-4,
+  .grid-cols-3,
+  .grid-cols-2 { grid-template-columns: repeat(1, 1fr); }
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #334155;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--bg-color);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Search Bar */
+.search-bar {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Filter Bar */
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-bar select {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Table */
+.table-container {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table th {
+  font-weight: 600;
+  background-color: var(--bg-color);
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table td {
+  font-size: 14px;
+}
+
+.table tr:hover {
+  background-color: var(--bg-color);
+}
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-primary {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.badge-success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge-danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Stats Card */
+.stats-card {
+  background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+  color: white;
+  padding: 24px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stats-number {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.stats-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* List */
+.list-group {
+  list-style: none;
+}
+
+.list-item {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.list-item:hover {
+  background-color: var(--bg-color);
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  padding-left: 30px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--border-color);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 24px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -26px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  border: 2px solid var(--card-bg);
+}
+
+.timeline-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.timeline-content {
+  font-size: 14px;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+.empty-state-text {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-muted { color: var(--text-secondary); }
+.font-bold { font-weight: 700; }
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.flex { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.gap-1 { gap: 8px; }
+.gap-2 { gap: 16px; }
+.gap-3 { gap: 24px; }
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  /* Container */
+  .container {
+    padding: 0 12px;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 12px 0;
+  }
+
+  .navbar-brand {
+    font-size: 16px;
+  }
+
+  .navbar-menu {
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  /* Page Header */
+  .page-header {
+    margin: 20px 0;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+  }
+
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .flex-between > .btn {
+    width: 100%;
+  }
+
+  /* Cards */
+  .card {
+    padding: 16px;
+  }
+
+  .card-header {
+    font-size: 16px;
+  }
+
+  /* Stats Card */
+  .stats-number {
+    font-size: 28px;
+  }
+
+  .stats-label {
+    font-size: 13px;
+  }
+
+  /* Table - Make scrollable on mobile */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table {
+    min-width: 800px;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .table th {
+    font-size: 11px;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .btn-sm {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  /* Filter Bar - Stack on mobile */
+  .filter-bar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .filter-bar select {
+    width: 100%;
+    font-size: 13px;
+  }
+
+  /* Search Bar */
+  .search-input {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  /* Forms */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 14px;
+  }
+
+  /* Timeline */
+  .timeline {
+    padding-left: 20px;
+  }
+
+  .timeline-item::before {
+    left: -18px;
+    width: 10px;
+    height: 10px;
+  }
+
+  .timeline-date {
+    font-size: 12px;
+  }
+
+  .timeline-content {
+    font-size: 13px;
+  }
+
+  /* Badge */
+  .badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  /* List Items */
+  .list-item {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  /* Utility - Mobile specific */
+  .mt-1 { margin-top: 6px; }
+  .mt-2 { margin-top: 12px; }
+  .mt-3 { margin-top: 18px; }
+  .mb-1 { margin-bottom: 6px; }
+  .mb-2 { margin-bottom: 12px; }
+  .mb-3 { margin-bottom: 18px; }
+}
+
+/* Extra small devices (phones in portrait, less than 480px) */
+@media (max-width: 480px) {
+  .navbar-menu {
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .stats-number {
+    font-size: 24px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .btn + .btn {
+    margin-top: 8px;
+  }
+}
+
+/* Hospital Card Grid Mobile Optimization */
+@media (max-width: 768px) {
+  /* Hospital cards should be single column on mobile */
+  div[style*="display: grid"][style*="gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Adjust sticky filter for mobile - reduce top offset */
+  .card[style*="position: sticky"] {
+    top: -10px !important;
+  }
+
+  /* Ensure touch targets are properly sized */
+  button,
+  a[role="button"],
+  .btn {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  /* Reduce container padding on mobile */
+  .container {
+    padding: 12px;
+  }
+
+  /* Reduce page header spacing */
+  .page-header {
+    margin-bottom: 24px !important;
+  }
+
+  /* More compact cards on mobile */
+  .card {
+    margin-bottom: 16px !important;
+  }
+
+  /* Adjust main specialty grid on mobile - show 3-4 columns */
+  div[style*="gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))'"] {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  /* Compact quick access section on mobile */
+  div[style*="gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))'"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* Stack filter buttons vertically on very small screens */
+@media (max-width: 480px) {
+  /* Make symptom search buttons smaller */
+  div[style*="display: flex"][style*="gap: '8px'"] button[style*="borderRadius: '19px'"] {
+    font-size: 11px !important;
+    padding: 0 10px !important;
+    min-height: 32px !important;
+  }
+
+  /* Page title smaller on very small screens */
+  .page-title {
+    font-size: 24px !important;
+  }
+
+  .page-subtitle {
+    font-size: 14px !important;
+  }
+
+  /* Compact specialty cards even more on small phones */
+  div[style*="gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))'"] {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)) !important;
+  }
+
+  div[style*="gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))'"] button {
+    min-height: 70px !important;
+    padding: 8px 4px !important;
+  }
+
+  div[style*="gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))'"] button > div:first-child {
+    font-size: 20px !important;
+  }
+
+  div[style*="gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))'"] button > div:last-child {
+    font-size: 11px !important;
+  }
+}
+
+/* Safe area for notched devices (iPhone X and newer) */
+@supports (padding: env(safe-area-inset-top)) {
+  .navbar {
+    padding-top: calc(16px + env(safe-area-inset-top));
+  }
+
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ==================== 광고 배너 반응형 스타일 ==================== */
+
+/* 모바일 하단 고정 배너 - 기본 숨김 */
+.mobile-bottom-ad {
+  display: none;
+}
+
+/* App.jsx 사이드 배너 - 기본 숨김 */
+.sidebar-ad-left,
+.sidebar-ad-right {
+  display: none !important;
+}
+
+/* HospitalList 헤더 우측 광고 - 기본 숨김 */
+.hospital-header-ad {
+  display: none !important;
+}
+
+/* 태블릿 이하 - 모바일 하단 배너 표시 */
+@media (max-width: 768px) {
+  .mobile-bottom-ad {
+    display: block;
+  }
+
+  /* 모바일에서는 하단 배너만큼 여백 추가 */
+  body {
+    padding-bottom: 70px;
+  }
+}
+
+/* 중형 데스크톱 - 병원 찾기 헤더 우측 광고 표시 */
+@media (min-width: 1000px) {
+  .hospital-header-ad {
+    display: block !important;
+  }
+
+  /* 모바일 하단 배너 숨김 */
+  .mobile-bottom-ad {
+    display: none;
+  }
+
+  body {
+    padding-bottom: 0;
+  }
+}
+
+/* 대형 데스크톱 - App.jsx 좌우 사이드 배너 표시 */
+@media (min-width: 1400px) {
+  .sidebar-ad-left,
+  .sidebar-ad-right {
+    display: block !important;
+  }
+}
