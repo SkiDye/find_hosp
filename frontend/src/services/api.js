@@ -1,62 +1,131 @@
-import axios from 'axios';
+// GitHub Pages 정적 버전 - JSON 데이터 사용
+let cachedData = null;
 
-const API_BASE_URL = 'http://localhost:5001/api';
+// JSON 데이터 로드
+async function loadData() {
+  if (cachedData) return cachedData;
+  
+  const response = await fetch('/data.json');
+  cachedData = await response.json();
+  return cachedData;
+}
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// 필터링 함수
+function filterHospitals(hospitals, filters = {}) {
+  return hospitals.filter(hospital => {
+    if (filters.region && hospital.region !== filters.region) return false;
+    if (filters.city && hospital.city !== filters.city) return false;
+    if (filters.type && hospital.type !== filters.type) return false;
+    if (filters.specialty && !hospital.specialties.includes(filters.specialty)) return false;
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      if (!hospital.name.toLowerCase().includes(searchLower) && 
+          !hospital.address.toLowerCase().includes(searchLower)) {
+        return false;
+      }
+    }
+    if (filters.has_emergency_room && !hospital.has_emergency_room) return false;
+    if (filters.open_24_hours && !hospital.open_24_hours) return false;
+    if (filters.weekend_available && !hospital.weekend_available) return false;
+    return true;
+  });
+}
 
 // 병원 API
 export const hospitalAPI = {
-  getAll: (filters = {}) => {
-    const params = new URLSearchParams();
-    if (filters.region) params.append('region', filters.region);
-    if (filters.city) params.append('city', filters.city);
-    if (filters.type) params.append('type', filters.type);
-    if (filters.specialty) params.append('specialty', filters.specialty);
-    if (filters.search) params.append('search', filters.search);
-    if (filters.has_emergency_room) params.append('has_emergency_room', 'true');
-    if (filters.open_24_hours) params.append('open_24_hours', 'true');
-    if (filters.weekend_available) params.append('weekend_available', 'true');
-    return api.get(`/hospitals?${params.toString()}`);
+  getAll: async (filters = {}) => {
+    const data = await loadData();
+    const filtered = filterHospitals(data.hospitals, filters);
+    return { data: filtered };
   },
-  getById: (id) => api.get(`/hospitals/${id}`),
-  getDoctors: (id) => api.get(`/hospitals/${id}/doctors`),
-  getStats: () => api.get('/hospitals/stats'),
-  create: (data) => api.post('/hospitals', data),
-  update: (id, data) => api.put(`/hospitals/${id}`, data),
-  delete: (id) => api.delete(`/hospitals/${id}`),
+  
+  getById: async (id) => {
+    const data = await loadData();
+    const hospital = data.hospitals.find(h => h.id === parseInt(id));
+    return { data: hospital };
+  },
+  
+  getDoctors: async (id) => {
+    const data = await loadData();
+    const careers = data.careers.filter(c => c.hospital_id === parseInt(id) && c.is_current);
+    const doctorIds = careers.map(c => c.doctor_id);
+    const doctors = data.doctors.filter(d => doctorIds.includes(d.id));
+    return { data: doctors };
+  },
+  
+  getStats: async () => {
+    const data = await loadData();
+    return { 
+      data: { 
+        total: data.hospitals.length,
+        byType: {}
+      } 
+    };
+  },
+  
+  // 쓰기 작업은 지원하지 않음 (정적 버전)
+  create: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  update: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  delete: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
 };
 
 // 의사 API
 export const doctorAPI = {
-  getAll: (filters = {}) => {
-    const params = new URLSearchParams();
-    if (filters.specialty) params.append('specialty', filters.specialty);
-    if (filters.search) params.append('search', filters.search);
-    return api.get(`/doctors?${params.toString()}`);
+  getAll: async (filters = {}) => {
+    const data = await loadData();
+    let doctors = data.doctors;
+    
+    if (filters.specialty) {
+      doctors = doctors.filter(d => d.specialty === filters.specialty);
+    }
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      doctors = doctors.filter(d => d.name.toLowerCase().includes(searchLower));
+    }
+    
+    return { data: doctors };
   },
-  getById: (id) => api.get(`/doctors/${id}`),
-  getCurrentHospital: (id) => api.get(`/doctors/${id}/current-hospital`),
-  getStats: () => api.get('/doctors/stats'),
-  create: (data) => api.post('/doctors', data),
-  update: (id, data) => api.put(`/doctors/${id}`, data),
-  delete: (id) => api.delete(`/doctors/${id}`),
-  addEducation: (id, data) => api.post(`/doctors/${id}/education`, data),
-  addCareer: (id, data) => api.post(`/doctors/${id}/career`, data),
-  updateCareer: (id, careerId, data) => api.put(`/doctors/${id}/career/${careerId}`, data),
-  addCertification: (id, data) => api.post(`/doctors/${id}/certifications`, data),
+  
+  getById: async (id) => {
+    const data = await loadData();
+    const doctor = data.doctors.find(d => d.id === parseInt(id));
+    return { data: doctor };
+  },
+  
+  getCurrentHospital: async (id) => {
+    const data = await loadData();
+    const career = data.careers.find(c => c.doctor_id === parseInt(id) && c.is_current);
+    if (!career) return { data: null };
+    
+    const hospital = data.hospitals.find(h => h.id === career.hospital_id);
+    return { data: hospital };
+  },
+  
+  getStats: async () => {
+    const data = await loadData();
+    return { 
+      data: { 
+        total: data.doctors.length 
+      } 
+    };
+  },
+  
+  // 쓰기 작업은 지원하지 않음
+  create: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  update: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  delete: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  addEducation: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  addCareer: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  updateCareer: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  addCertification: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
 };
 
-// 관리자 API
+// 관리자 API (정적 버전에서는 비활성화)
 export const adminAPI = {
-  login: (credentials) => api.post('/admin/login', credentials),
-  addDoctor: (doctorData) => api.post('/admin/doctors', doctorData),
-  updateDoctor: (id, doctorData) => api.put(`/admin/doctors/${id}`, doctorData),
-  deleteDoctor: (id) => api.delete(`/admin/doctors/${id}`),
+  login: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  addDoctor: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  updateDoctor: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
+  deleteDoctor: () => Promise.reject('정적 버전에서는 지원하지 않습니다'),
 };
 
-export default api;
+export default { hospitalAPI, doctorAPI, adminAPI };
