@@ -96,27 +96,16 @@ function AdBanner({ type = 'horizontal', position = 'right', style = {} }) {
       style={bannerStyle}
     >
       {type === 'sidebar' && (
-        <>
-          <div style={{ fontSize: '24px', marginBottom: '16px' }}>📢</div>
-          <div>광고 영역</div>
-          <div style={{ fontSize: '12px', marginTop: '8px', opacity: 0.9 }}>
-            160 x 600
-          </div>
-        </>
+        <></>
       )}
 
       {type === 'horizontal' && (
-        <>
-          <div style={{ fontSize: '20px', marginRight: '12px' }}>📢</div>
-          <div>광고 배너 영역 (가로형)</div>
-        </>
+        <></>
       )}
 
       {type === 'mobile-fixed' && (
         <>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ fontSize: '18px' }}>📢</div>
-            <div>모바일 광고</div>
           </div>
           <button
             onClick={handleClose}
