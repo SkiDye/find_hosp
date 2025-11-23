@@ -11,8 +11,7 @@ backend/dist/
 .env.local
 .env.production
 
-# Database
-backend/data/*.db
+# Database temporary files
 backend/data/*.db-shm
 backend/data/*.db-wal
 
