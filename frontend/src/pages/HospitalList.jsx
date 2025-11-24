@@ -939,7 +939,7 @@ function HospitalList() {
                         toggleFavorite(hospital.id);
                       }}
                       style={{
-                        background: isFavorite(hospital.id) ? '#ef4444' : 'white',
+                        background: 'white',
                         border: '1px solid #e5e7eb',
                         borderRadius: '50%',
                         width: '36px',

@@ -7,13 +7,11 @@ import OperatingHours from '../components/OperatingHours';
 function HospitalDetail() {
   const { id } = useParams();
   const [hospital, setHospital] = useState(null);
-  const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchHospital();
-    fetchDoctors();
   }, [id]);
 
   const fetchHospital = async () => {
@@ -22,15 +20,6 @@ function HospitalDetail() {
       setHospital(response.data);
     } catch (error) {
       console.error('병원 정보 로딩 실패:', error);
-    }
-  };
-
-  const fetchDoctors = async () => {
-    try {
-      const response = await hospitalAPI.getDoctors(id);
-      setDoctors(response.data);
-    } catch (error) {
-      console.error('의사 목록 로딩 실패:', error);
     } finally {
       setLoading(false);
     }
@@ -222,11 +211,11 @@ function HospitalDetail() {
       </div>
 
       {/* 위치 */}
-      {hospital.latitude && hospital.longitude && (
+      {hospital.address && (
         <div className="card">
           <div className="card-header">위치</div>
           <iframe
-            src={`https://www.google.com/maps?q=${hospital.latitude},${hospital.longitude}&output=embed`}
+            src={`https://www.google.com/maps?q=${encodeURIComponent(hospital.address)}&output=embed`}
             style={{
               width: '100%',
               height: '400px',
@@ -248,7 +237,7 @@ function HospitalDetail() {
             )}
             <div style={{display: 'flex', gap: '8px', marginTop: '12px'}}>
               <a
-                href={`https://map.naver.com/v5/search/${encodeURIComponent(hospital.name)}`}
+                href={`https://map.naver.com/v5/search/${encodeURIComponent(`${hospital.region} ${hospital.city} ${hospital.name}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary"
@@ -293,74 +282,171 @@ function HospitalDetail() {
       {/* 진료과 */}
       {hospital.specialties && hospital.specialties.length > 0 && (
         <div className="card">
-          <div className="card-header">진료과 ({hospital.specialties.length}개)</div>
-          <div style={{display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px'}}>
-            {hospital.specialties.map((specialty, idx) => (
-              <span key={idx} className="badge" style={{
-                background: 'var(--bg-secondary)',
-                padding: '4px 10px',
-                fontSize: '13px',
-                borderRadius: '4px'
-              }}>
-                {specialty}
-              </span>
-            ))}
+          <div className="card-header" style={{fontSize: '20px', fontWeight: 'bold', marginBottom: '20px'}}>
+            진료과 안내
           </div>
+
+          {/* 대표 진료과 */}
+          {hospital.specialties.length >= 3 && (
+            <>
+              <div style={{fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: 'var(--text-secondary)'}}>
+                ⭐ 대표 진료과
+              </div>
+              <div style={{
+                display: 'flex',
+                gap: '10px',
+                marginBottom: '20px',
+                flexWrap: 'wrap'
+              }}>
+                {hospital.specialties.slice(0, 3).map((specialty, idx) => {
+                  const icons = ['💓', '🦴', '🫁'];
+                  return (
+                    <div
+                      key={idx}
+                      style={{
+                        background: '#f8fafc',
+                        border: '2px solid #e2e8f0',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        color: '#334155'
+                      }}
+                    >
+                      <span style={{fontSize: '20px'}}>{icons[idx]}</span>
+                      <span>{specialty}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {/* 전체 진료과 */}
+          <div style={{fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: 'var(--text-secondary)'}}>
+            📋 전체 진료과 ({hospital.specialties.length}개)
+          </div>
+
+          {(() => {
+            // 진료과 분류
+            const internalMedicine = hospital.specialties.filter(s =>
+              s.includes('내과') && !s.includes('외과')
+            );
+            const surgery = hospital.specialties.filter(s =>
+              s.includes('외과')
+            );
+            const others = hospital.specialties.filter(s =>
+              !s.includes('내과') && !s.includes('외과')
+            );
+
+            return (
+              <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                {/* 내과 계열 */}
+                {internalMedicine.length > 0 && (
+                  <div>
+                    <div style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#3b82f6',
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      🔵 내과 계열 ({internalMedicine.length}개)
+                    </div>
+                    <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                      {internalMedicine.map((specialty, idx) => (
+                        <span key={idx} style={{
+                          background: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)',
+                          color: '#075985',
+                          padding: '8px 14px',
+                          fontSize: '15px',
+                          fontWeight: '500',
+                          borderRadius: '8px',
+                          border: '1px solid #7dd3fc'
+                        }}>
+                          {specialty}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 외과 계열 */}
+                {surgery.length > 0 && (
+                  <div>
+                    <div style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#ef4444',
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      🔴 외과 계열 ({surgery.length}개)
+                    </div>
+                    <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                      {surgery.map((specialty, idx) => (
+                        <span key={idx} style={{
+                          background: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)',
+                          color: '#991b1b',
+                          padding: '8px 14px',
+                          fontSize: '15px',
+                          fontWeight: '500',
+                          borderRadius: '8px',
+                          border: '1px solid #fca5a5'
+                        }}>
+                          {specialty}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 기타 진료과 */}
+                {others.length > 0 && (
+                  <div>
+                    <div style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#6b7280',
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      ⚫ 기타 진료과 ({others.length}개)
+                    </div>
+                    <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                      {others.map((specialty, idx) => (
+                        <span key={idx} style={{
+                          background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+                          color: '#374151',
+                          padding: '8px 14px',
+                          fontSize: '15px',
+                          fontWeight: '500',
+                          borderRadius: '8px',
+                          border: '1px solid #d1d5db'
+                        }}>
+                          {specialty}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
 
       {/* 운영시간 */}
       <OperatingHours hospital={hospital} />
-
-      <div className="card">
-        <div className="card-header flex-between">
-          <span>소속 의사 ({doctors.length}명)</span>
-        </div>
-        {doctors.length > 0 ? (
-          <div className="table-container">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>이름</th>
-                  <th>전문과</th>
-                  <th>세부전공</th>
-                  <th>직위</th>
-                  <th>진료과</th>
-                  <th>근무시작일</th>
-                  <th>작업</th>
-                </tr>
-              </thead>
-              <tbody>
-                {doctors.map((doctor) => (
-                  <tr key={doctor.id}>
-                    <td className="font-bold">
-                      <Link to={`/doctors/${doctor.id}`} style={{color: 'var(--primary-color)'}}>
-                        {doctor.name}
-                      </Link>
-                    </td>
-                    <td>
-                      <span className="badge badge-success">{doctor.specialty}</span>
-                    </td>
-                    <td>{doctor.sub_specialty || '-'}</td>
-                    <td>{doctor.position}</td>
-                    <td>{doctor.department}</td>
-                    <td>{doctor.start_date}</td>
-                    <td>
-                      <Link to={`/doctors/${doctor.id}`} className="btn btn-sm btn-outline" style={{minHeight: '36px', display: 'inline-flex', alignItems: 'center', padding: '0 12px', touchAction: 'manipulation'}}>
-                        상세보기
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="empty-state">
-            <p className="empty-state-text">현재 소속 의사가 없습니다</p>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

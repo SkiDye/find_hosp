@@ -11,7 +11,10 @@ router.get('/', (req, res) => {
       city: req.query.city,
       type: req.query.type,
       specialty: req.query.specialty,
-      search: req.query.search
+      search: req.query.search,
+      has_emergency_room: req.query.has_emergency_room,
+      open_24_hours: req.query.open_24_hours,
+      weekend_available: req.query.weekend_available
     };
     console.log('🔍 Hospital filters:', filters);
     const hospitals = Hospital.getAll(filters);

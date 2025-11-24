@@ -21,21 +21,18 @@ function OperatingHours({ hospital }) {
   const businessStatus = getBusinessStatus(hospital);
   const today = new Date().getDay(); // 0 (일요일) ~ 6 (토요일)
 
-  const daysOfWeek = [
-    { key: 'sunday', label: '일요일', dayNum: 0 },
-    { key: 'weekday', label: '월요일', dayNum: 1 },
-    { key: 'weekday', label: '화요일', dayNum: 2 },
-    { key: 'weekday', label: '수요일', dayNum: 3 },
-    { key: 'weekday', label: '목요일', dayNum: 4 },
-    { key: 'weekday', label: '금요일', dayNum: 5 },
-    { key: 'saturday', label: '토요일', dayNum: 6 }
-  ];
-
   const formatTime = (timeObj) => {
     if (!timeObj || timeObj === 'closed') return '휴무';
     if (typeof timeObj === 'string') return timeObj;
     return `${timeObj.open} - ${timeObj.close}`;
   };
+
+  // 요일별 데이터 준비
+  const scheduleData = [
+    { key: 'weekday', label: '평일', shortLabel: '월-금', days: '(월화수목금)', dayNums: [1, 2, 3, 4, 5] },
+    { key: 'saturday', label: '토요일', shortLabel: '토', days: '', dayNums: [6] },
+    { key: 'sunday', label: '일요일', shortLabel: '일', days: '', dayNums: [0] }
+  ];
 
   return (
     <div className="card" style={{marginBottom: '20px'}}>
@@ -43,13 +40,13 @@ function OperatingHours({ hospital }) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '20px'
+        marginBottom: '16px'
       }}>
         <h2 style={{fontSize: '20px', fontWeight: 'bold', margin: 0}}>운영시간</h2>
         <div style={{
-          padding: '8px 16px',
-          borderRadius: '8px',
-          fontSize: '14px',
+          padding: '6px 12px',
+          borderRadius: '6px',
+          fontSize: '13px',
           fontWeight: '600',
           background: businessStatus.bgColor,
           color: businessStatus.color,
@@ -61,14 +58,14 @@ function OperatingHours({ hospital }) {
 
       <div style={{
         background: 'var(--bg-secondary)',
-        borderRadius: '12px',
-        padding: '20px',
-        marginBottom: '16px'
+        borderRadius: '8px',
+        padding: '12px',
+        marginBottom: '12px'
       }}>
-        {daysOfWeek.map((day, index) => {
-          const isToday = day.dayNum === today;
-          const timeData = hours[day.key];
+        {scheduleData.map((schedule, index) => {
+          const timeData = hours[schedule.key];
           const timeStr = formatTime(timeData);
+          const isToday = schedule.dayNums.includes(today);
 
           return (
             <div
@@ -77,33 +74,41 @@ function OperatingHours({ hospital }) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                marginBottom: index < daysOfWeek.length - 1 ? '8px' : 0,
+                padding: '8px 12px',
+                borderRadius: '6px',
+                marginBottom: index < scheduleData.length - 1 ? '6px' : 0,
                 background: isToday ? 'white' : 'transparent',
-                border: isToday ? '2px solid var(--primary-color)' : '2px solid transparent',
-                transition: 'all 0.2s'
+                border: isToday ? '2px solid var(--primary-color)' : '2px solid transparent'
               }}
             >
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '6px'
               }}>
                 <span style={{
-                  fontSize: '15px',
-                  fontWeight: isToday ? 'bold' : '500',
-                  color: isToday ? 'var(--primary-color)' : 'var(--text-primary)'
+                  fontSize: '14px',
+                  fontWeight: isToday ? 'bold' : '600',
+                  color: isToday ? 'var(--primary-color)' : 'var(--text-primary)',
+                  minWidth: '50px'
                 }}>
-                  {day.label}
+                  {schedule.shortLabel}
                 </span>
+                {schedule.days && (
+                  <span style={{
+                    fontSize: '12px',
+                    color: 'var(--text-secondary)'
+                  }}>
+                    {schedule.days}
+                  </span>
+                )}
                 {isToday && (
                   <span style={{
-                    fontSize: '11px',
-                    padding: '2px 8px',
+                    fontSize: '10px',
+                    padding: '2px 6px',
                     background: 'var(--primary-color)',
                     color: 'white',
-                    borderRadius: '12px',
+                    borderRadius: '10px',
                     fontWeight: 'bold'
                   }}>
                     오늘
@@ -111,7 +116,7 @@ function OperatingHours({ hospital }) {
                 )}
               </div>
               <span style={{
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: isToday ? '600' : '500',
                 color: timeStr === '휴무' ? 'var(--text-secondary)' : 'var(--text-primary)'
               }}>
@@ -127,14 +132,14 @@ function OperatingHours({ hospital }) {
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
-          padding: '12px 16px',
+          gap: '6px',
+          padding: '8px 12px',
           background: '#fff8e1',
-          borderRadius: '8px',
-          marginBottom: '12px'
+          borderRadius: '6px',
+          marginBottom: '8px'
         }}>
-          <span style={{fontSize: '18px'}}>🍱</span>
-          <span style={{fontSize: '14px', color: '#f57c00', fontWeight: '500'}}>
+          <span style={{fontSize: '16px'}}>🍱</span>
+          <span style={{fontSize: '13px', color: '#f57c00', fontWeight: '500'}}>
             점심시간: {hours.lunch_break.start} - {hours.lunch_break.end}
           </span>
         </div>
@@ -145,13 +150,13 @@ function OperatingHours({ hospital }) {
         <div style={{
           display: 'flex',
           alignItems: 'flex-start',
-          gap: '8px',
-          padding: '12px 16px',
+          gap: '6px',
+          padding: '8px 12px',
           background: '#e3f2fd',
-          borderRadius: '8px'
+          borderRadius: '6px'
         }}>
-          <span style={{fontSize: '18px'}}>ℹ️</span>
-          <span style={{fontSize: '14px', color: '#1976d2', lineHeight: '1.6'}}>
+          <span style={{fontSize: '16px'}}>ℹ️</span>
+          <span style={{fontSize: '13px', color: '#1976d2', lineHeight: '1.5'}}>
             {hours.note}
           </span>
         </div>
